@@ -103,6 +103,7 @@ function BrowserFrame({ src, host, name }: { src: string; host: string; name: st
             fill
             unoptimized
             priority
+            referrerPolicy="no-referrer"
             sizes="(min-width: 1280px) 1152px, 100vw"
             className="object-cover object-top"
           />
@@ -466,6 +467,8 @@ export function ReferenceDetail({ project, previous, next, related }: ReferenceD
                         alt=""
                         fill
                         unoptimized
+                        loading="eager"
+                        referrerPolicy="no-referrer"
                         sizes={wide ? "(min-width: 1280px) 1152px, 100vw" : "(min-width: 640px) 50vw, 100vw"}
                         className="object-cover object-top transition duration-700 ease-out group-hover:scale-[1.03]"
                       />

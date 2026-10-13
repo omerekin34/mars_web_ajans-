@@ -9,11 +9,23 @@ const MIN_UNIFORM_BORDER = 0.6;
 const DARK_LUMINANCE = 0.22;
 
 const cache = new Map<string, Promise<CleanLogo | null>>();
+const LOAD_TIMEOUT_MS = 8000;
+
+let queue: Promise<unknown> = Promise.resolve();
+
+function enqueue<T>(task: () => Promise<T>) {
+  const run = queue.then(task, task);
+  queue = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
 
 export function cleanLogo(url: string): Promise<CleanLogo | null> {
   let pending = cache.get(url);
   if (!pending) {
-    pending = processLogo(url).catch(() => null);
+    pending = enqueue(() => processLogo(url)).catch(() => null);
     cache.set(url, pending);
   }
   return pending;
@@ -22,10 +34,16 @@ export function cleanLogo(url: string): Promise<CleanLogo | null> {
 function loadImage(src: string, cors: boolean) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new window.Image();
+    const timer = window.setTimeout(() => reject(new Error("timeout")), LOAD_TIMEOUT_MS);
+    const finish = (ok: boolean) => {
+      window.clearTimeout(timer);
+      if (ok) resolve(image);
+      else reject(new Error("load"));
+    };
     if (cors) image.crossOrigin = "anonymous";
     image.decoding = "async";
-    image.onload = () => resolve(image);
-    image.onerror = reject;
+    image.onload = () => finish(true);
+    image.onerror = () => finish(false);
     image.src = src;
   });
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import type { PointerEvent } from "react";
+import { useState, type PointerEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Star, TrendingUp } from "lucide-react";
@@ -19,6 +19,14 @@ function trackSpotlight(event: PointerEvent<HTMLElement>) {
   event.currentTarget.style.setProperty("--y", `${event.clientY - rect.top}px`);
 }
 
+function LogoMark({ name }: { name: string }) {
+  return (
+    <span className="flex h-20 w-20 items-center justify-center rounded-2xl border border-emerald-300/20 bg-gradient-to-br from-emerald-400/15 to-sky-400/10 text-3xl font-semibold tracking-tight text-emerald-100">
+      {name.slice(0, 1).toUpperCase()}
+    </span>
+  );
+}
+
 export function ProjectLogo({
   project,
   name,
@@ -28,14 +36,12 @@ export function ProjectLogo({
   name: string;
   className?: string;
 }) {
-  if (!project.imageUrl) {
-    return (
-      <span className="flex h-20 w-20 items-center justify-center rounded-2xl border border-emerald-300/20 bg-gradient-to-br from-emerald-400/15 to-sky-400/10 text-3xl font-semibold tracking-tight text-emerald-100">
-        {name.slice(0, 1).toUpperCase()}
-      </span>
-    );
-  }
-  return <CleanLogoImage src={project.imageUrl} className={className} />;
+  const [failedUrl, setFailedUrl] = useState("");
+
+  if (!project.imageUrl || failedUrl === project.imageUrl) return <LogoMark name={name} />;
+  return (
+    <CleanLogoImage src={project.imageUrl} className={className} onFail={() => setFailedUrl(project.imageUrl)} />
+  );
 }
 
 export function ReferenceCard({ project }: { project: PublicProject }) {
@@ -74,6 +80,8 @@ export function ReferenceCard({ project }: { project: PublicProject }) {
               alt=""
               fill
               unoptimized
+              loading="eager"
+              referrerPolicy="no-referrer"
               sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               className="object-cover object-top transition duration-700 ease-out group-hover:scale-[1.04]"
             />

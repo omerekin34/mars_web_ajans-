@@ -2,32 +2,62 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { cleanLogo, type CleanLogo } from "@/lib/clean-logo";
+import { cleanLogo } from "@/lib/clean-logo";
 
-export function CleanLogoImage({ src, className = "" }: { src: string; className?: string }) {
-  const [result, setResult] = useState<{ src: string; logo: CleanLogo | null } | null>(null);
+export function CleanLogoImage({
+  src,
+  className = "",
+  onFail,
+}: {
+  src: string;
+  className?: string;
+  onFail?: () => void;
+}) {
+  const [cleaned, setCleaned] = useState<string | null>(null);
+  const [settled, setSettled] = useState(false);
+  const [originalFailed, setOriginalFailed] = useState(false);
+  const [cleanFailed, setCleanFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
+    setCleaned(null);
+    setSettled(false);
+    setOriginalFailed(false);
+    setCleanFailed(false);
     cleanLogo(src).then((logo) => {
-      if (active) setResult({ src, logo });
+      if (!active) return;
+      if (logo?.src) setCleaned(logo.src);
+      setSettled(true);
     });
     return () => {
       active = false;
     };
   }, [src]);
 
-  if (result?.src !== src) return null;
+  useEffect(() => {
+    if (originalFailed && settled && (!cleaned || cleanFailed)) onFail?.();
+  }, [cleanFailed, cleaned, onFail, originalFailed, settled]);
 
-  const logo = result.logo;
+  if (originalFailed && !cleaned) return null;
+  if (originalFailed && cleanFailed) return null;
+
+  const displaySrc = cleaned && !cleanFailed ? cleaned : src;
+
   return (
     <Image
-      src={logo?.src ?? src}
+      key={displaySrc}
+      src={displaySrc}
       alt=""
-      width={logo?.width ?? 320}
-      height={logo?.height ?? 160}
+      width={320}
+      height={160}
       unoptimized
-      className={`h-auto w-auto object-contain ${className}`}
+      loading="eager"
+      referrerPolicy="no-referrer"
+      onError={() => {
+        if (displaySrc === src) setOriginalFailed(true);
+        else setCleanFailed(true);
+      }}
+      className={`h-auto w-auto max-w-full object-contain ${className}`}
     />
   );
 }

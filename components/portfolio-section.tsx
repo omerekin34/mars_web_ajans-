@@ -66,7 +66,7 @@ export function ReferenceGrid({ projects, limit }: { projects: PublicProject[]; 
   return (
     <>
       {sectors.length > 1 ? (
-        <div ref={scrollerRef} className="mt-12 -mx-6 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div ref={scrollerRef} className="mt-12 -mx-6 min-w-0 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div role="tablist" aria-label={t.portfolio.filterLabel} className="mx-auto flex w-max gap-2">
             {filters.map((item) => {
               const active = filter === item.id;
@@ -150,7 +150,7 @@ export function PortfolioSection({ projects }: { projects: PublicProject[] }) {
         aria-hidden
         className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[34rem] w-[60rem] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-emerald-500/10 via-teal-400/[0.07] to-sky-500/10 blur-3xl"
       />
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto min-w-0 max-w-6xl">
         <Reveal>
           <SectionHeading
             eyebrow={t.portfolio.eyebrow}

@@ -24,7 +24,7 @@ function AskCard({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-500/[0.12] via-white/[0.03] to-transparent p-6 sm:p-7 ${className}`}
+      className={`relative min-w-0 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-500/[0.12] via-white/[0.03] to-transparent p-6 sm:p-7 ${className}`}
     >
       <div
         aria-hidden
@@ -34,10 +34,10 @@ function AskCard({ className = "" }: { className?: string }) {
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-emerald-300/30 bg-emerald-400/10 text-emerald-300">
           <MessageCircleQuestion className="h-5 w-5" aria-hidden />
         </span>
-        <p className="text-xs font-medium tracking-[0.18em] text-emerald-200/80 uppercase">{t.faq.askEyebrow}</p>
+        <p className="min-w-0 text-xs font-medium tracking-[0.18em] text-emerald-200/80 uppercase">{t.faq.askEyebrow}</p>
       </div>
       <h3 className="mt-5 text-xl font-semibold text-white">{t.faq.askTitle}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-400">{t.faq.askBody}</p>
+      <p className="mt-2 text-sm leading-relaxed text-pretty text-slate-400">{t.faq.askBody}</p>
       <ul className="mt-5 space-y-2.5">
         {t.faq.points.map((point) => (
           <li key={point} className="flex items-center gap-2.5 text-sm text-slate-300">
@@ -131,8 +131,8 @@ export function Faq({ items }: { items: PublicFaq[] }) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
       ) : null}
 
-      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
-        <div className="lg:sticky lg:top-28 lg:self-start">
+      <div className="mx-auto grid min-w-0 max-w-6xl gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+        <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
           <Reveal>
             <SectionHeading eyebrow={t.faq.eyebrow} title={t.faq.title} lead={t.faq.lead} align="start" />
           </Reveal>
@@ -141,7 +141,7 @@ export function Faq({ items }: { items: PublicFaq[] }) {
           </Reveal>
         </div>
 
-        <div>
+        <div className="min-w-0">
           {items.length === 0 ? (
             <p className="text-center text-sm text-slate-500 lg:text-left">{t.faq.empty}</p>
           ) : (
@@ -150,7 +150,7 @@ export function Faq({ items }: { items: PublicFaq[] }) {
                 <div
                   role="group"
                   aria-label={t.faq.filterLabel}
-                  className="-mx-6 mb-6 flex gap-2 overflow-x-auto px-6 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden"
+                  className="-mx-6 mb-6 flex min-w-0 gap-2 overflow-x-auto px-6 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
                 >
                   <button
                     type="button"

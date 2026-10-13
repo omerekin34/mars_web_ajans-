@@ -17,7 +17,7 @@ export function ReferencesIndex({ projects }: { projects: PublicProject[] }) {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[560px] bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(16,185,129,0.14),transparent_70%)]"
         />
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto min-w-0 max-w-6xl">
           <Reveal className="mx-auto max-w-3xl text-center">
             <p className="text-xs font-semibold tracking-[0.22em] text-violet-300/80 uppercase">{t.reference.listEyebrow}</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-balance text-white md:text-6xl">{t.reference.listTitle}</h1>
