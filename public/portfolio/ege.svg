@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 140" fill="none">
+  <circle cx="58" cy="70" r="34" stroke="#FCD34D" stroke-width="2"/>
+  <path d="M58 42v10M58 88v10M30 70h10M76 70h10" stroke="#FDE68A" stroke-width="2" stroke-linecap="round"/>
+  <path d="M58 54l8 16h-16l8-16Z" fill="#FCD34D"/>
+  <text x="114" y="66" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="650" letter-spacing="3">EGE</text>
+  <text x="114" y="96" fill="#FCD34D" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" letter-spacing="6">ROTA</text>
+</svg>

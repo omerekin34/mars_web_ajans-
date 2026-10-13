@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 140" fill="none">
+  <circle cx="58" cy="70" r="36" stroke="#C4B5FD" stroke-width="2"/>
+  <path d="M58 40c8 10 12 20 12 30s-4 20-12 30c-8-10-12-20-12-30s4-20 12-30Z" stroke="#E9D5FF" stroke-width="1.6"/>
+  <path d="M30 70h56M36 56h44M36 84h44" stroke="#C4B5FD" stroke-width="1.4"/>
+  <text x="116" y="66" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="650" letter-spacing="3">ATLAS</text>
+  <text x="116" y="96" fill="#C4B5FD" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" letter-spacing="6">VAKFI</text>
+</svg>

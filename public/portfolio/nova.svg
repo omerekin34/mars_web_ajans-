@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 140" fill="none">
+  <rect x="22" y="34" width="72" height="72" rx="20" stroke="#5EEAD4" stroke-width="2"/>
+  <path d="M58 52v36M40 70h36" stroke="#99F6E4" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="116" y="66" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="650" letter-spacing="3">NOVA</text>
+  <text x="116" y="96" fill="#5EEAD4" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" letter-spacing="6">KL0N0K</text>
+</svg>
