@@ -22,6 +22,8 @@ import {
 } from "@/components/admin/primitives";
 import { useSupabaseResource } from "@/components/admin/use-resource";
 import { useAdminToast } from "@/components/admin/toast-provider";
+import { TranslateButton } from "@/components/admin/translate-button";
+import type { TranslateField } from "@/components/admin/use-auto-translate";
 import type { PackageRow } from "@/lib/admin/types";
 import { asFeatures, asNumber, emptyToNull, formatTry, friendlyError, textLines } from "@/lib/admin/format";
 import { discountPercent, parseAddons, toAddonRecords, type PackageAddon } from "@/lib/package-addons";
@@ -57,6 +59,29 @@ type DraftErrors = Partial<Record<"title" | "price" | "old_price" | "sort_order"
 type Editor = { mode: "create" | "edit"; id?: string };
 
 const upgradeHint = "Yeni paket alanları için packages-upgrade.sql dosyasını Supabase SQL Editor'da bir kez çalıştırın.";
+
+const translateFields: TranslateField<Draft>[] = [
+  { source: "title", target: "title_en" },
+  { source: "tagline", target: "tagline_en" },
+  { source: "features", target: "features_en" },
+  { source: "delivery_time", target: "delivery_time_en" },
+  { source: "price_note", target: "price_note_en" },
+  { source: "badge", target: "badge_en" },
+  { source: "cta_label", target: "cta_label_en" },
+  {
+    get: (draft) => draft.addons.filter((addon) => addon.title.trim()).map((addon) => addon.title).join("\n"),
+    set: (draft, translated) => {
+      const lines = translated.split("\n");
+      let index = 0;
+      return {
+        addons: draft.addons.map((addon) =>
+          addon.title.trim() ? { ...addon, title_en: (lines[index++] ?? "").trim() || addon.title_en } : addon,
+        ),
+      };
+    },
+    hasContent: (draft) => draft.addons.some((addon) => addon.title_en.trim()),
+  },
+];
 
 function blankDraft(order: number): Draft {
   return {
@@ -429,7 +454,16 @@ export default function PackagesPage() {
                 />
               </Field>
             </LanguageColumn>
-            <LanguageColumn title="İngilizce İçerik">
+            <LanguageColumn
+              title="İngilizce İçerik"
+              action={
+                <TranslateButton
+                  draft={draft}
+                  fields={translateFields}
+                  onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                />
+              }
+            >
               <Field label="Başlık" hint="Boş bırakılırsa Türkçe başlık gösterilir.">
                 <input
                   value={draft.title_en}

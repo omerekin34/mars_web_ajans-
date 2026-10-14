@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function Logo({
   hideWordmarkOnMobile = false,
   wordmarkClassName = "",
@@ -6,12 +8,18 @@ export function Logo({
   wordmarkClassName?: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-2.5">
-      <span className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 bg-white/5">
-        <span className="h-3 w-3 rounded-full bg-gradient-to-br from-violet-300 to-sky-400 shadow-[0_0_12px_rgba(139,92,246,0.85)]" />
-      </span>
+    <span className="inline-flex items-center">
+      <Image
+        src="/marsweblogo-optimized.png"
+        alt="Mars Web Ajans"
+        width={180}
+        height={64}
+        className="h-10 w-auto object-contain"
+        priority
+        unoptimized
+      />
       <span
-        className={`text-[15px] font-semibold tracking-tight whitespace-nowrap text-white ${
+        className={`hidden text-[15px] font-semibold tracking-tight whitespace-nowrap text-white sr-only ${
           hideWordmarkOnMobile ? "max-sm:sr-only" : ""
         } ${wordmarkClassName}`}
       >

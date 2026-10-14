@@ -60,10 +60,21 @@ export function BilingualGrid({ children }: { children: React.ReactNode }) {
   return <div className="grid grid-cols-1 gap-4 md:grid-cols-2">{children}</div>;
 }
 
-export function LanguageColumn({ title, children }: { title: string; children: React.ReactNode }) {
+export function LanguageColumn({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-4 rounded-2xl border border-white/10 bg-slate-950/40 p-4">
-      <p className="text-[11px] font-semibold tracking-[0.18em] text-emerald-300/80 uppercase">{title}</p>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[11px] font-semibold tracking-[0.18em] text-emerald-300/80 uppercase">{title}</p>
+        {action}
+      </div>
       {children}
     </div>
   );

@@ -22,6 +22,7 @@ import {
 } from "@/components/admin/primitives";
 import { useSupabaseResource } from "@/components/admin/use-resource";
 import { useAdminToast } from "@/components/admin/toast-provider";
+import { TranslateButton } from "@/components/admin/translate-button";
 import type { FaqRow } from "@/lib/admin/types";
 import { emptyToNull, friendlyError } from "@/lib/admin/format";
 import { asFaqCategory, faqCategories } from "@/lib/faq";
@@ -273,7 +274,19 @@ export default function FaqsPage() {
                 />
               </Field>
             </LanguageColumn>
-            <LanguageColumn title="İngilizce İçerik">
+            <LanguageColumn
+              title="İngilizce İçerik"
+              action={
+                <TranslateButton
+                  draft={draft}
+                  fields={[
+                    { source: "question", target: "question_en" },
+                    { source: "answer", target: "answer_en" },
+                  ]}
+                  onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                />
+              }
+            >
               <Field label="Soru" hint="Boş bırakılırsa Türkçe soru gösterilir.">
                 <input
                   value={draft.question_en}

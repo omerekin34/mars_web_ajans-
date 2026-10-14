@@ -21,6 +21,7 @@ import {
 } from "@/components/admin/primitives";
 import { useSupabaseResource } from "@/components/admin/use-resource";
 import { useAdminToast } from "@/components/admin/toast-provider";
+import { TranslateButton } from "@/components/admin/translate-button";
 import type { SiteSettingRow } from "@/lib/admin/types";
 import { emptyToNull, friendlyError } from "@/lib/admin/format";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -75,12 +76,14 @@ function LegalTextPair({
   en,
   onTr,
   onEn,
+  enAction,
 }: {
   title: string;
   tr: string;
   en: string;
   onTr: (value: string) => void;
   onEn: (value: string) => void;
+  enAction?: React.ReactNode;
 }) {
   return (
     <div className="space-y-3">
@@ -91,7 +94,7 @@ function LegalTextPair({
             <textarea value={tr} onChange={(event) => onTr(event.target.value)} className={legalTextClass} />
           </Field>
         </LanguageColumn>
-        <LanguageColumn title="İngilizce İçerik">
+        <LanguageColumn title="İngilizce İçerik" action={enAction}>
           <Field label="Metin" hint="Boş bırakılırsa Türkçe metin gösterilir.">
             <textarea value={en} onChange={(event) => onEn(event.target.value)} className={legalTextClass} />
           </Field>
@@ -492,6 +495,13 @@ export default function SettingsPage() {
                   en={footerDraft.kvkk_text_en}
                   onTr={(value) => setFooterDraft((current) => ({ ...current, kvkk_text: value }))}
                   onEn={(value) => setFooterDraft((current) => ({ ...current, kvkk_text_en: value }))}
+                  enAction={
+                    <TranslateButton
+                      draft={footerDraft}
+                      fields={[{ source: "kvkk_text", target: "kvkk_text_en" }]}
+                      onApply={(patch) => setFooterDraft((current) => ({ ...current, ...patch }))}
+                    />
+                  }
                 />
                 <LegalTextPair
                   title="Gizlilik Politikası"
@@ -499,6 +509,13 @@ export default function SettingsPage() {
                   en={footerDraft.privacy_text_en}
                   onTr={(value) => setFooterDraft((current) => ({ ...current, privacy_text: value }))}
                   onEn={(value) => setFooterDraft((current) => ({ ...current, privacy_text_en: value }))}
+                  enAction={
+                    <TranslateButton
+                      draft={footerDraft}
+                      fields={[{ source: "privacy_text", target: "privacy_text_en" }]}
+                      onApply={(patch) => setFooterDraft((current) => ({ ...current, ...patch }))}
+                    />
+                  }
                 />
                 <LegalTextPair
                   title="Çerez Politikası"
@@ -506,6 +523,13 @@ export default function SettingsPage() {
                   en={footerDraft.cookie_text_en}
                   onTr={(value) => setFooterDraft((current) => ({ ...current, cookie_text: value }))}
                   onEn={(value) => setFooterDraft((current) => ({ ...current, cookie_text_en: value }))}
+                  enAction={
+                    <TranslateButton
+                      draft={footerDraft}
+                      fields={[{ source: "cookie_text", target: "cookie_text_en" }]}
+                      onApply={(patch) => setFooterDraft((current) => ({ ...current, ...patch }))}
+                    />
+                  }
                 />
               </div>
             )}
@@ -606,7 +630,22 @@ export default function SettingsPage() {
                 />
               </Field>
             </LanguageColumn>
-            <LanguageColumn title="İngilizce İçerik">
+            <LanguageColumn
+              title="İngilizce İçerik"
+              action={
+                draft.setting_key.trim() === "address" || draft.setting_key.trim() === "footer_text" ? (
+                  <TranslateButton
+                    draft={draft}
+                    fields={[
+                      draft.setting_key.trim() === "address"
+                        ? { source: "value", target: "address_en" }
+                        : { source: "value", target: "footer_text_en" },
+                    ]}
+                    onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                  />
+                ) : undefined
+              }
+            >
               {draft.setting_key.trim() === "address" ? (
                 <Field label="Adres" hint="Boş bırakılırsa Türkçe adres gösterilir.">
                   <textarea

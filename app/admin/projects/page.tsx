@@ -38,6 +38,8 @@ import {
 } from "@/components/admin/primitives";
 import { useSupabaseResource } from "@/components/admin/use-resource";
 import { useAdminToast } from "@/components/admin/toast-provider";
+import { TranslateButton } from "@/components/admin/translate-button";
+import type { TranslateField } from "@/components/admin/use-auto-translate";
 import { ImageUpload } from "@/components/admin/image-upload";
 import type { ProjectRow } from "@/lib/admin/types";
 import { emptyToNull, friendlyError, isHttpUrl } from "@/lib/admin/format";
@@ -119,6 +121,38 @@ const errorTab: Record<ErrorKey, TabId> = {
 };
 
 const SUMMARY_LIMIT = 220;
+
+const generalTranslateFields: TranslateField<Draft>[] = [
+  { source: "client_name", target: "client_name_en" },
+  { source: "sector", target: "industry_en" },
+  { source: "summary", target: "summary_en" },
+  { source: "services", target: "services_en" },
+  { source: "duration", target: "duration_en" },
+];
+
+const storyTranslateFields: TranslateField<Draft>[] = [
+  { source: "client_problem", target: "client_problem_en" },
+  { source: "our_solution", target: "our_solution_en" },
+  { source: "features", target: "features_en" },
+];
+
+const resultsTranslateFields: TranslateField<Draft>[] = [
+  { source: "client_quote", target: "client_quote_en" },
+  { source: "quote_author", target: "quote_author_en" },
+  {
+    get: (draft) => draft.metrics.filter((metric) => metric.label.trim()).map((metric) => metric.label).join("\n"),
+    set: (draft, translated) => {
+      const lines = translated.split("\n");
+      let index = 0;
+      return {
+        metrics: draft.metrics.map((metric) =>
+          metric.label.trim() ? { ...metric, labelEn: (lines[index++] ?? "").trim() || metric.labelEn } : metric,
+        ),
+      };
+    },
+    hasContent: (draft) => draft.metrics.some((metric) => metric.labelEn.trim()),
+  },
+];
 
 function blankDraft(order: number): Draft {
   return {
@@ -729,7 +763,16 @@ export default function ProjectsPage() {
                   <input {...bind("duration")} className={inputClass} placeholder="3 hafta" />
                 </Field>
               </LanguageColumn>
-              <LanguageColumn title="İngilizce İçerik">
+              <LanguageColumn
+                title="İngilizce İçerik"
+                action={
+                  <TranslateButton
+                    draft={draft}
+                    fields={generalTranslateFields}
+                    onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                  />
+                }
+              >
                 <Field label="Müşteri adı" hint="Opsiyonel. Boşsa Türkçe ad gösterilir.">
                   <input {...bind("client_name_en")} className={inputClass} placeholder="Atlas Foundation" />
                 </Field>
@@ -821,7 +864,16 @@ export default function ProjectsPage() {
                   />
                 </Field>
               </LanguageColumn>
-              <LanguageColumn title="İngilizce İçerik">
+              <LanguageColumn
+                title="İngilizce İçerik"
+                action={
+                  <TranslateButton
+                    draft={draft}
+                    fields={storyTranslateFields}
+                    onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                  />
+                }
+              >
                 <Field label="Client problem / need" hint="Boşsa Türkçe metin gösterilir.">
                   <textarea
                     rows={7}
@@ -917,7 +969,16 @@ export default function ProjectsPage() {
                   <input {...bind("quote_author")} className={inputClass} placeholder="Ayşe Demir, Genel Müdür" />
                 </Field>
               </LanguageColumn>
-              <LanguageColumn title="Müşteri yorumu (İngilizce)">
+              <LanguageColumn
+                title="Müşteri yorumu (İngilizce)"
+                action={
+                  <TranslateButton
+                    draft={draft}
+                    fields={resultsTranslateFields}
+                    onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                  />
+                }
+              >
                 <Field label="Quote" hint="Boşsa Türkçe yorum gösterilir.">
                   <textarea
                     rows={4}

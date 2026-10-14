@@ -22,6 +22,7 @@ import {
 } from "@/components/admin/primitives";
 import { useSupabaseResource } from "@/components/admin/use-resource";
 import { useAdminToast } from "@/components/admin/toast-provider";
+import { TranslateButton } from "@/components/admin/translate-button";
 import type { TestimonialRow } from "@/lib/admin/types";
 import { emptyToNull, friendlyError } from "@/lib/admin/format";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -312,7 +313,19 @@ export default function TestimonialsPage() {
                 />
               </Field>
             </LanguageColumn>
-            <LanguageColumn title="İngilizce İçerik">
+            <LanguageColumn
+              title="İngilizce İçerik"
+              action={
+                <TranslateButton
+                  draft={draft}
+                  fields={[
+                    { source: "title", target: "title_en" },
+                    { source: "review", target: "review_en" },
+                  ]}
+                  onApply={(patch) => setDraft((current) => ({ ...current, ...patch }))}
+                />
+              }
+            >
               <Field label="Unvan / Şirket (EN)" hint="Boş bırakılırsa Türkçe unvan gösterilir.">
                 <input
                   value={draft.title_en}

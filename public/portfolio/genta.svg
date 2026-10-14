@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 140" fill="none">
-  <rect x="16" y="28" width="84" height="84" rx="22" stroke="#67E8F9" stroke-width="2"/>
-  <path d="M40 92V48h14.5l9.5 22 9.5-22H88v44h-11V66L67 88h-8L49 66v26H40Z" fill="#F8FAFC"/>
-  <text x="124" y="68" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="650" letter-spacing="3">GENTA</text>
-  <text x="124" y="98" fill="#67E8F9" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" letter-spacing="6">MECL0S</text>
-</svg>

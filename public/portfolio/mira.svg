@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 140" fill="none">
-  <rect x="22" y="34" width="72" height="72" rx="8" stroke="#F9A8D4" stroke-width="2"/>
-  <path d="M40 88l18-36 18 36" stroke="#FBCFE8" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M48 74h20" stroke="#F9A8D4" stroke-width="2"/>
-  <text x="116" y="66" fill="#F8FAFC" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="650" letter-spacing="3">MIRA</text>
-  <text x="116" y="96" fill="#F9A8D4" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="500" letter-spacing="6">ATELIER</text>
-</svg>
