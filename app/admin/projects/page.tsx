@@ -38,6 +38,7 @@ import {
 } from "@/components/admin/primitives";
 import { useSupabaseResource } from "@/components/admin/use-resource";
 import { useAdminToast } from "@/components/admin/toast-provider";
+import { ImageUpload } from "@/components/admin/image-upload";
 import type { ProjectRow } from "@/lib/admin/types";
 import { emptyToNull, friendlyError, isHttpUrl } from "@/lib/admin/format";
 import {
@@ -934,14 +935,24 @@ export default function ProjectsPage() {
 
           <div role="tabpanel" hidden={tab !== "media"} className="space-y-4">
             <Field label="Logo URL" error={fieldErrors.image_url} hint="Şeffaf arka planlı PNG veya SVG en iyi sonucu verir. Kartta ve detay sayfasında görünür.">
-              <UrlInput value={draft.image_url} onChange={(value) => set("image_url", value)} />
+              <ImageUpload
+                value={draft.image_url}
+                onChange={(value) => set("image_url", value)}
+                folder="logos"
+                error={fieldErrors.image_url}
+              />
             </Field>
             <Field
               label="Kapak görseli URL"
               error={fieldErrors.cover_url}
               hint="Sitenin masaüstü ekran görüntüsü (ör. 1440×900). Kartta ve detay sayfasında tarayıcı çerçevesi içinde gösterilir."
             >
-              <UrlInput value={draft.cover_url} onChange={(value) => set("cover_url", value)} />
+              <ImageUpload
+                value={draft.cover_url}
+                onChange={(value) => set("cover_url", value)}
+                folder="covers"
+                error={fieldErrors.cover_url}
+              />
             </Field>
 
             <div className="space-y-3 rounded-2xl border border-white/10 bg-slate-950/40 p-4">
@@ -952,24 +963,27 @@ export default function ProjectsPage() {
                 </p>
               </div>
               {draft.gallery.map((url, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <span className="w-5 shrink-0 text-center text-xs text-slate-500 tabular-nums">{index + 1}</span>
+                <div key={index} className="flex items-start gap-2">
+                  <span className="w-5 shrink-0 text-center text-xs text-slate-500 tabular-nums mt-2.5">{index + 1}</span>
                   <div className="min-w-0 flex-1">
-                    <UrlInput
+                    <ImageUpload
                       value={url}
-                      autoFocus={index === draft.gallery.length - 1 && !url}
                       onChange={(value) => updateGallery(draft.gallery.map((item, position) => (position === index ? value : item)))}
+                      folder="gallery"
+                      autoFocus={index === draft.gallery.length - 1 && !url}
                     />
                   </div>
-                  <IconButton label="Yukarı taşı" onClick={() => moveGallery(index, -1)}>
-                    <ArrowUp className="h-3.5 w-3.5" aria-hidden />
-                  </IconButton>
-                  <IconButton label="Aşağı taşı" onClick={() => moveGallery(index, 1)}>
-                    <ArrowDown className="h-3.5 w-3.5" aria-hidden />
-                  </IconButton>
-                  <IconButton label="Görseli kaldır" tone="danger" onClick={() => updateGallery(draft.gallery.filter((_, position) => position !== index))}>
-                    <X className="h-4 w-4" aria-hidden />
-                  </IconButton>
+                  <div className="flex shrink-0 flex-col gap-1 mt-2">
+                    <IconButton label="Yukarı taşı" onClick={() => moveGallery(index, -1)}>
+                      <ArrowUp className="h-3.5 w-3.5" aria-hidden />
+                    </IconButton>
+                    <IconButton label="Aşağı taşı" onClick={() => moveGallery(index, 1)}>
+                      <ArrowDown className="h-3.5 w-3.5" aria-hidden />
+                    </IconButton>
+                    <IconButton label="Görseli kaldır" tone="danger" onClick={() => updateGallery(draft.gallery.filter((_, position) => position !== index))}>
+                      <X className="h-4 w-4" aria-hidden />
+                    </IconButton>
+                  </div>
                 </div>
               ))}
               {fieldErrors.gallery ? <p className="text-xs text-rose-300">{fieldErrors.gallery}</p> : null}

@@ -3,15 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   BadgeDollarSign,
   CircleHelp,
   Images,
   Inbox,
   LayoutDashboard,
+  LogOut,
   Menu,
   Quote,
   Settings,
+  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -20,6 +23,7 @@ import { ToastProvider } from "@/components/admin/toast-provider";
 
 const navItems: { href: string; label: string; icon: LucideIcon; exact?: boolean }[] = [
   { href: "/admin", label: "Dashboard (Özet)", icon: LayoutDashboard, exact: true },
+  { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/leads", label: "Müşteri Talepleri (Leads)", icon: Inbox },
   { href: "/admin/packages", label: "Paketler & Fiyatlar", icon: BadgeDollarSign },
   { href: "/admin/faqs", label: "Sıkça Sorulan Sorular", icon: CircleHelp },
@@ -63,12 +67,29 @@ function SidebarNav({ pathname, onNavigate }: { pathname: string; onNavigate?: (
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setOpen(false), 0);
     return () => window.clearTimeout(timer);
   }, [pathname]);
+
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
+  const logout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/admin/logout", { method: "POST" });
+      router.replace("/admin/login");
+      router.refresh();
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <ToastProvider>
@@ -79,11 +100,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </Link>
           <p className="mt-3 px-3 text-xs text-slate-500">Yönetim paneli</p>
           <SidebarNav pathname={pathname} />
-          <div className="mt-auto rounded-2xl border border-white/10 bg-slate-900/50 p-4 backdrop-blur-md">
+          <div className="mt-auto space-y-3 rounded-2xl border border-white/10 bg-slate-900/50 p-4 backdrop-blur-md">
             <p className="text-xs leading-5 text-slate-400">İçerikler Supabase üzerinden yayınlanır.</p>
-            <Link href="/" className="mt-3 inline-flex text-sm font-medium text-emerald-300 transition hover:text-emerald-200">
+            <Link href="/" className="inline-flex text-sm font-medium text-emerald-300 transition hover:text-emerald-200">
               Siteyi görüntüle
             </Link>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              disabled={loggingOut}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 px-3 py-2 text-sm text-slate-300 transition hover:border-white/20 hover:text-white disabled:opacity-60"
+            >
+              <LogOut className="h-4 w-4" aria-hidden />
+              {loggingOut ? "Çıkış yapılıyor..." : "Çıkış yap"}
+            </button>
           </div>
         </aside>
 

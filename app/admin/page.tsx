@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, BadgeDollarSign, CircleHelp, Images, Inbox, Quote, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, BadgeDollarSign, CircleHelp, Images, Inbox, Quote, Users, type LucideIcon } from "lucide-react";
 import { CardSkeleton, PageHeader, Panel, SetupNotice, StatusNote, TableSkeleton } from "@/components/admin/primitives";
 import { leadHasContent, leadPackage, normalizeLead, type LeadView } from "@/lib/admin/leads";
 import { friendlyError } from "@/lib/admin/format";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Counts = {
+  users: number | null;
   leads: number | null;
   packages: number | null;
   faqs: number | null;
@@ -17,6 +18,7 @@ type Counts = {
 };
 
 const cards: { key: keyof Counts; label: string; href: string; icon: LucideIcon }[] = [
+  { key: "users", label: "Users", href: "/admin/users", icon: Users },
   { key: "leads", label: "Müşteri talepleri", href: "/admin/leads", icon: Inbox },
   { key: "packages", label: "Paketler", href: "/admin/packages", icon: BadgeDollarSign },
   { key: "faqs", label: "Sıkça sorulan sorular", href: "/admin/faqs", icon: CircleHelp },
@@ -28,7 +30,7 @@ export default function AdminDashboardPage() {
   const [configured, setConfigured] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [counts, setCounts] = useState<Counts>({ leads: null, packages: null, faqs: null, projects: null, testimonials: null });
+  const [counts, setCounts] = useState<Counts>({ users: null, leads: null, packages: null, faqs: null, projects: null, testimonials: null });
   const [recent, setRecent] = useState<LeadView[]>([]);
 
   useEffect(() => {
@@ -44,13 +46,14 @@ export default function AdminDashboardPage() {
         return;
       }
 
-      const [leadsCount, packagesCount, faqsCount, projectsCount, testimonialsCount, recentLeads] = await Promise.all([
+      const [leadsCount, packagesCount, faqsCount, projectsCount, testimonialsCount, recentLeads, usersResult] = await Promise.all([
         supabase.from("leads").select("*", { count: "exact", head: true }),
         supabase.from("packages").select("*", { count: "exact", head: true }),
         supabase.from("faqs").select("*", { count: "exact", head: true }),
         supabase.from("projects").select("*", { count: "exact", head: true }),
         supabase.from("testimonials").select("*", { count: "exact", head: true }),
         supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(5),
+        fetch("/api/admin/users", { cache: "no-store" }),
       ]);
 
       const recentResult = recentLeads.error
@@ -59,8 +62,10 @@ export default function AdminDashboardPage() {
 
       if (cancelled) return;
 
+      const usersPayload = usersResult.ok ? ((await usersResult.json().catch(() => null)) as { users?: unknown[] } | null) : null;
       const firstError = [leadsCount.error, packagesCount.error, faqsCount.error, projectsCount.error, testimonialsCount.error, recentResult.error].find(Boolean);
       setCounts({
+        users: usersPayload?.users ? usersPayload.users.length : null,
         leads: leadsCount.error ? null : (leadsCount.count ?? 0),
         packages: packagesCount.error ? null : (packagesCount.count ?? 0),
         faqs: faqsCount.error ? null : (faqsCount.count ?? 0),
