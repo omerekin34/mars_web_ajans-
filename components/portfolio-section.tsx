@@ -23,6 +23,9 @@ export function ReferenceGrid({ projects, limit }: { projects: PublicProject[]; 
   const reduce = useReducedMotion();
   const [filter, setFilter] = useState("all");
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   const sectors = useMemo(() => {
     const seen = new Map<string, { label: string; count: number }>();
@@ -54,6 +57,35 @@ export function ReferenceGrid({ projects, limit }: { projects: PublicProject[]; 
     scroller.scrollTo({ left: scroller.scrollLeft + delta, behavior: reduce ? "auto" : "smooth" });
   }, [filter, reduce]);
 
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setStartX(e.pageX - (scrollerRef.current?.offsetLeft || 0));
+    setScrollLeft(scrollerRef.current?.scrollLeft || 0);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !scrollerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - (scrollerRef.current.offsetLeft || 0);
+    const walk = (x - startX) * 2;
+    scrollerRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (scrollerRef.current) {
+      e.preventDefault();
+      scrollerRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
   const visible = useMemo(() => {
     const filtered = projects.filter((project) => filter === "all" || project.sector === filter);
     return limit ? filtered.slice(0, limit) : filtered;
@@ -66,7 +98,15 @@ export function ReferenceGrid({ projects, limit }: { projects: PublicProject[]; 
   return (
     <>
       {sectors.length > 1 ? (
-        <div ref={scrollerRef} className="mt-12 -mx-6 min-w-0 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div
+          ref={scrollerRef}
+          className="mt-12 -mx-6 min-w-0 overflow-x-auto px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onWheel={handleWheel}
+        >
           <div role="tablist" aria-label={t.portfolio.filterLabel} className="mx-auto flex w-max gap-2">
             {filters.map((item) => {
               const active = filter === item.id;
