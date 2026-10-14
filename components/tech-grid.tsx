@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
+import { AnimatedCounter } from "@/components/animated-counter";
 import { useI18n } from "@/components/language-provider";
 import type { Dictionary } from "@/lib/translations";
 
@@ -356,17 +357,40 @@ export function TechGrid() {
 
         <Reveal delay={0.1}>
           <dl className="mt-4 grid grid-cols-2 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] md:grid-cols-4">
-            {t.tech.stats.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={`flex flex-col px-6 py-7 text-center ${index % 2 === 1 ? "border-l border-white/10" : ""} ${index >= 2 ? "border-t border-white/10 md:border-t-0" : ""} ${index === 2 ? "md:border-l" : ""}`}
-              >
-                <dt className="order-2 mt-1 text-xs text-slate-400 sm:text-sm">{stat.label}</dt>
-                <dd className="order-1 bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
-                  {stat.value}
-                </dd>
-              </div>
-            ))}
+            {t.tech.stats.map((stat, index) => {
+              const value = stat.value;
+              let number = 0;
+              let prefix = "";
+              let suffix = "";
+
+              if (value.startsWith("%")) {
+                prefix = "%";
+                number = parseInt(value.replace("%", ""), 10);
+              } else if (value.endsWith("+")) {
+                number = parseInt(value.replace("+", ""), 10);
+                suffix = "+";
+              } else if (value.endsWith(" gün")) {
+                number = parseInt(value.replace(" gün", ""), 10);
+                suffix = " gün";
+              } else if (value.endsWith(" muhatap")) {
+                number = parseInt(value.replace(" muhatap", ""), 10);
+                suffix = " muhatap";
+              } else {
+                number = parseInt(value, 10);
+              }
+
+              return (
+                <div
+                  key={stat.label}
+                  className={`flex flex-col px-6 py-7 text-center ${index % 2 === 1 ? "border-l border-white/10" : ""} ${index >= 2 ? "border-t border-white/10 md:border-t-0" : ""} ${index === 2 ? "md:border-l" : ""}`}
+                >
+                  <dt className="order-2 mt-1 text-xs text-slate-400 sm:text-sm">{stat.label}</dt>
+                  <dd className="order-1 bg-gradient-to-r from-emerald-300 via-teal-200 to-sky-300 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl">
+                    <AnimatedCounter value={number} prefix={prefix} suffix={suffix} duration={2} />
+                  </dd>
+                </div>
+              );
+            })}
           </dl>
         </Reveal>
 
